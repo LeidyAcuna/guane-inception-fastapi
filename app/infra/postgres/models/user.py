@@ -5,15 +5,12 @@ from sqlalchemy.orm import relationship, backref
 
 from .base import Base
 
-
-class Dog(Base):
-    __tablename__ = "dog"
+class User(Base):
+    __tablename__ = "user"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     name = Column(String)
-    picture = Column(String)
-    create_date = Column(String)
-    is_adopted = Column(Boolean)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    lastname = Column(String)
+    email = Column(String, unique=True, index=True)
 
-    user = relationship("User", backref=backref("dogs_user", cascade="all,delete"))
+    dogs = relationship("Dog", cascade="all,delete")

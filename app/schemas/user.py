@@ -1,44 +1,45 @@
 from typing import Optional, List
 
 from pydantic import UUID4, BaseModel
-
+from .dog  import Dog
 
 class HTTPError(BaseModel):
     detail: str
 
 
-# Dog schema
+# User schema
 # Shared properties
-class DogBase(BaseModel):
+class UserBase(BaseModel):
     name: Optional[str] = None
-    is_adopted: Optional[bool] = None
+    lastname: Optional[str] = None
+    email: Optional[str] = None
 
 
 # Properties to receive via API on creation
-class DogCreate(DogBase):
+class UserCreate(UserBase):
     name: str
-    is_adopted: bool
+    lastname: str
+    email: str
 
 
 # Properties to receive via API on update
-class DogUpdate(DogBase):
+class UserUpdate(UserBase):
     pass
 
 
-class DogInDBBase(DogBase):
-    picture: Optional[str] = None
-    create_date: Optional[str] = None
+class UserInDBBase(UserBase):
     id: Optional[UUID4] = None
-    user_id: Optional[UUID4] = None
+    dogs: List[Dog] = []
 
     class Config:
         orm_mode = True
 
+
 # Additional properties to return via API
-class Dog(DogInDBBase):
+class User(UserInDBBase):
     pass
 
 
 # Additional properties stored in DB
-class DogInDB(DogInDBBase):
+class UserInDB(UserInDBBase):
     pass

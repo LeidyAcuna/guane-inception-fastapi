@@ -20,3 +20,5 @@ def get_db() -> Generator:
 @as_declarative()
 class Base:
     id: Any
+    
+    
