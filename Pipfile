@@ -11,6 +11,10 @@ pytest = "*"
 pydantic = "*"
 psycopg2 = "*"
 python-dotenv = "*"
+python-multipart = "*"
+python-jose = "*"
+passlib = "*"
+bcrypt = "*"
 
 [dev-packages]
 

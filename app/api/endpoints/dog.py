@@ -1,12 +1,15 @@
 from fastapi import APIRouter
 from typing import Any, List
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, HTTPException, status
 from starlette.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 from sqlalchemy.orm import Session
 from app.infra.postgres.crud.dog import dogs
 from app.infra.postgres.crud.user import users
 from app.schemas import dog
 from app.infra.postgres.models.base import get_db
+from app.auth import functions
+from app.schemas import auth
+
 
 router = APIRouter()
 
@@ -46,7 +49,8 @@ def create_dog_for_user(
                         *,
                         db: Session = Depends(get_db),
                         dog_obj: dog.DogCreate,
-                        email: str) -> Any:
+                        email: str,
+                        current_user: auth.UserAuthBase = Depends(functions.get_current_user)) -> Any:
     data_user = users.get_email(db=db, email=email)
     if not data_user:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="User not found")
@@ -62,7 +66,8 @@ def create_dog_for_user(
 def update_dog(
                 *, db: Session = Depends(get_db),
                 name: str,
-                dog_obj: dog.DogUpdate) -> Any:
+                dog_obj: dog.DogUpdate,
+                current_user: auth.UserAuthBase = Depends(functions.get_current_user)) -> Any:
     data_dog = dogs.get_name(db=db, name=name)
     if not data_dog:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="Dog not found")

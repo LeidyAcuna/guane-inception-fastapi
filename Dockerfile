@@ -1,5 +1,5 @@
 # pull python image
-FROM python:3.8.1-alpine
+FROM python:3.8-alpine
 
 # Set environment varibles
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -9,11 +9,12 @@ WORKDIR /usr/src/inception/
 
 # Install python dependencies
 RUN apk update \
- && apk add postgresql-dev gcc python3-dev musl-dev
+ && apk add --no-cache python3-dev libffi-dev gcc postgresql-dev gcc musl-dev
 RUN pip install --upgrade pip
 RUN pip install pipenv pytest
 COPY Pipfile Pipfile.lock /usr/src/inception/
 RUN pipenv install --system --dev
+
 
 # copy app
 COPY . /usr/src/app/ 

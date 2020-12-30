@@ -6,6 +6,9 @@ from sqlalchemy.orm import Session
 from app.infra.postgres.crud.user import users
 from app.schemas import user
 from app.infra.postgres.models.base import get_db
+from app.auth import functions
+from app.schemas import auth
+
 
 router = APIRouter()
 
@@ -20,7 +23,8 @@ def list_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100) -
         status_code=HTTP_201_CREATED,
         tags=["Users"])
 def create_users(*, db: Session = Depends(get_db),
-                 user_obj: user.UserCreate) -> Any:
+                 user_obj: user.UserCreate,
+                 current_user: auth.UserAuthBase = Depends(functions.get_current_user)) -> Any:
     data_user = users.get_email(db=db, email=user_obj.email)
     if data_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -36,7 +40,8 @@ def create_users(*, db: Session = Depends(get_db),
 def update_user(
                 *, db: Session = Depends(get_db),
                 email: str,
-                user_obj: user.UserUpdate) -> Any:
+                user_obj: user.UserUpdate,
+                current_user: auth.UserAuthBase = Depends(functions.get_current_user)) -> Any:
     data_user = users.get_email(db=db, email=email)
     if not data_user:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="User not found")
