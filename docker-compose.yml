@@ -10,6 +10,8 @@ services:
       - .env
     environment:
       - PGDATA=/var/lib/postgresql/data/pgdata
+    networks:
+      - app-network
   
   pgadmin:
     image: dpage/pgadmin4
@@ -19,6 +21,8 @@ services:
       - postgres
     env_file:
       - .env
+    networks:
+      - app-network
 
   web:
     build: .
@@ -29,5 +33,20 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  celery:
+    build: .
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
 volumes:
   postgres_data:
